@@ -1,10 +1,10 @@
-#! /usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 import httplib
 import urllib
 import sys
 import re
+import datetime
 
 from mechanize import Browser
 from bs4 import BeautifulSoup
@@ -12,15 +12,18 @@ from bs4 import BeautifulSoup
 from conf.config import *
 from conf.settings import *
 
+from ltur.models import LturJourney
+
 # TODO: error handling
 # (1) if on_date - today > 7, inform user
 
 
 def main():
-    page = submit_form()
-    prices = parse_page(page.read(), TRIGGER)
-    if any([p <= max_price for p in prices]):
-        print OUTPUT_FORMAT.format(prices)
+    results_page = submit_form()
+    journeys = parse_journeys(results_page.read(), TRIGGER)
+    cheap_journeys = _filter_cheap_journeys(journeys)
+    content = OUTPUT_FORMAT.format(cheap_journeys)
+    PUBLISH_TARGET.publish(content)
 
 
 def submit_form():
@@ -46,9 +49,9 @@ def submit_form():
     return br.submit()
 
 
-def parse_page(haystack, needles):
+def parse_journeys(haystack, needles):
     bs = BeautifulSoup(haystack)
-    gems = []
+    journeys = []
     price_tags = []
     for needle in needles:
         price_tags.extend(bs.find_all('td', attrs={'class': needle}))
@@ -59,8 +62,19 @@ def parse_page(haystack, needles):
         if match:
             price = match.group(1)
             price = re.sub(',', '.', price)
-            gems.append(float(price))
-    return gems
+
+            # TODO parse proper departue/arrival dates, no. of changes and regular price
+            on_date_datetime = datetime.datetime.strptime(on_date, '%d.%m.%Y')
+            new_journey = LturJourney(origin=from_city, destination=to_city, departure=on_date_datetime,
+                                      arrival=on_date_datetime, changes=0, special_price=float(price),
+                                      normal_price=1000.0)
+            journeys.append(new_journey)
+
+    return journeys
+
+
+def _filter_cheap_journeys(all_found_journeys):
+    return filter(lambda it: it.special_price <= max_price, all_found_journeys)
 
 
 if __name__ == '__main__':
