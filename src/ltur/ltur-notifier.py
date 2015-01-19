@@ -9,7 +9,7 @@ import re
 from mechanize import Browser
 from bs4 import BeautifulSoup
 
-from config import *
+from conf.config import *
 
 # TODO: error handling
 # (1) if on_date - today > 7, inform user
