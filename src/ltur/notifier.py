@@ -10,18 +10,17 @@ from mechanize import Browser
 from bs4 import BeautifulSoup
 
 from conf.config import *
+from conf.settings import *
 
 # TODO: error handling
 # (1) if on_date - today > 7, inform user
+
 
 def main():
     page = submit_form()
     prices = parse_page(page.read(), TRIGGER)
     if any([p <= max_price for p in prices]):
-        if MODE == 'pushover':
-            send_pushover(min(prices))
-        elif MODE == 'email':
-            send_mail(min(prices))
+        print OUTPUT_FORMAT.format(prices)
 
 
 def submit_form():
@@ -62,41 +61,6 @@ def parse_page(haystack, needles):
             price = re.sub(',', '.', price)
             gems.append(float(price))
     return gems
-
-
-def send_pushover(cheapest):
-    if not USER_TOKEN:
-        print( "You have to configure your Pushover user token in config.py for this to work." )
-        sys.exit()
-    conn = httplib.HTTPSConnection(PUSHOVER_URL)
-    conn.request('POST', PUSHOVER_PATH,
-                 urllib.urlencode({
-                     'title': '( : ltur für ' + str(cheapest) + ' ',
-                     'token': APP_TOKEN,
-                     'user': USER_TOKEN,
-                     'message': ')',
-                 }), {'Content-type': 'application/x-www-form-urlencoded'})
-
-    # for debugging
-    res = conn.getresponse()
-    conn.close()
-
-
-def send_mail(cheapest):
-    import smtplib
-    from email.mime.text import MIMEText
-
-    # Create a text/plain message
-    msg = MIMEText("Ltur notification. cheapest offer: %s €\n\n%s" % ( str(cheapest), user_url ))
-    msg['Subject'] = 'Ltur notifier: %s ' % str(cheapest)
-    msg['From'] = FROM_EMAIL
-    msg['To'] = EMAIL
-
-    s = smtplib.SMTP(SMTP_SERVER)
-    if SMTP_USER and SMTP_PASS:
-        s.login(SMTP_USER, SMTP_PASS)
-    s.sendmail(msg['From'], [msg['To']], msg.as_string())
-    s.quit()
 
 
 if __name__ == '__main__':
