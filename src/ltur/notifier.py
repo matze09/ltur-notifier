@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import httplib
 import urllib
@@ -67,7 +67,7 @@ def parse_journeys(haystack, needles):
             on_date_datetime = datetime.datetime.strptime(on_date, '%d.%m.%Y')
             new_journey = LturJourney(origin=from_city, destination=to_city, departure=on_date_datetime,
                                       arrival=on_date_datetime, changes=0, special_price=float(price),
-                                      normal_price=1000.0)
+                                      regular_price=1000.0)
             journeys.append(new_journey)
 
     return journeys

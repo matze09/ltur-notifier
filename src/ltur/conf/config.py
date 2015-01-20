@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 *-*
+# -*- coding: utf-8 *-*
 
 import datetime
 
@@ -18,7 +18,8 @@ at_time = '09:12'
 max_price = 40.0
 
 # set the output format: text, json, html ...
-OUTPUT_FORMAT = TextFormatter()
+# OUTPUT_FORMAT = TextFormatter()
+OUTPUT_FORMAT = JsonFormatter(pretty_print=True)
 
 # set the destination to publish results: console, email, pushover ...
 PUBLISH_TARGET = ConsolePublisher()

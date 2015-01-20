@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 *-*
+# -*- coding: utf-8 *-*
 
 # ltur's Bahn webpage: journey form (dynamically loaded after page load via AJAX)
 user_url = 'http://www.ltur.com/de/bahn.html?omnin=DB-DE'

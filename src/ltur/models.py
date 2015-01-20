@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'mloeks'
 
 import math
@@ -7,30 +8,42 @@ class LturJourney:
 
     DATETIME_FORMAT = '%x %X'
 
-    def __init__(self, origin, destination, departure, arrival, changes, special_price, normal_price):
+    def __init__(self, origin, destination, departure, arrival, changes, special_price, regular_price):
         self.origin = origin
         self.destination = destination
         self.departure = departure
         self.arrival = arrival
         self.changes = changes
         self.special_price = special_price
-        self.normal_price = normal_price
+        self.regular_price = regular_price
 
     def _calculate_duration(self):
-        duration = self.arrival - self.departure
-        return DateTimeFormattingUtils.duration_to_string(duration)
+        return self.arrival - self.departure
 
     def _parse_from_html_tag(self):
         # TODO
         raise NotImplementedError
 
+    def to_dict(self):
+        return {
+            'origin': unicode(self.origin),
+            'destination': unicode(self.destination),
+            'departure': self.departure,
+            'arrival': self.arrival,
+            'duration': self._calculate_duration(),
+            'changes': self.changes,
+            'special_price': self.special_price,
+            'regular_price': self.regular_price
+        }
+
     def __str__(self):
-        return u"{orig} to {dest} on {dep} -> {arr} - {dur} hrs - {changes} changes | " \
-               u"{special} EUR (instead of {normal} EUR)"\
+        duration_string = DateTimeFormattingUtils.duration_to_string(self._calculate_duration())
+        return unicode("{orig} to {dest} on {dep} -> {arr} - {dur} hrs - {changes} changes | "
+                       "{special} EUR (instead of {normal} EUR)")\
             .format(orig=self.origin, dest=self.destination,
                     dep=self.departure.strftime(self.DATETIME_FORMAT), arr=self.arrival.strftime(self.DATETIME_FORMAT),
-                    dur=self._calculate_duration(), changes=self.changes,
-                    special=self.special_price, normal=self.normal_price)
+                    dur=duration_string, changes=self.changes,
+                    special=self.special_price, normal=self.regular_price)
 
 
 class DateTimeFormattingUtils:
