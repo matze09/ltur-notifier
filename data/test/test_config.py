@@ -11,7 +11,7 @@ from_city = "Berlin Hbf"
 to_city = "Hamburg Hbf"
 
 # departure date
-at_date = 1               # default to tomorrow (+1 day)
+at_date = 3               # default to tomorrow (+1 day)
 # at_date = 'Tuesday'       # weekdays are also possible
 # at_date = '25-01-2015'
 
