@@ -4,22 +4,23 @@ __author__ = 'mloeks'
 from abc import ABCMeta, abstractmethod, abstractproperty
 
 import smtplib
+import logging
 from email.mime.text import MIMEText
-
-from ltur.conf.settings import user_url
 
 
 class BasePublisher(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def publish(self, content):
+    def publish(self, title, content):
         """ Publish formatted content to implemented targets. """
 
 
 class ConsolePublisher(BasePublisher):
 
-    def publish(self, content):
+    def publish(self, title, content):
+        print title
+        print "-"*66
         if content:
             print content
         else:
@@ -28,6 +29,8 @@ class ConsolePublisher(BasePublisher):
 
 class EmailPublisher(BasePublisher):
 
+    logger = logging.getLogger(__name__)
+
     def __init__(self, to_email, from_email, smtp_server, smtp_user, smtp_pass):
         self.to_email = to_email
         self.from_email = from_email
@@ -35,26 +38,38 @@ class EmailPublisher(BasePublisher):
         self.smtp_user = smtp_user
         self.smtp_pass = smtp_pass
 
-    def publish(self, content):
+    def publish(self, title, content):
         if content:
-            msg = MIMEText("Ltur notification.\n Prices:\n%s €\n\n%s" % (content, user_url))
-            msg['Subject'] = 'Ltur notifier'
-            msg['From'] = self.from_email
-            msg['To'] = self.to_email
-
-            s = smtplib.SMTP(self.smtp_server)
-            if self.smtp_user and self.smtp_pass:
-                s.login(self.smtp_user, self.smtp_pass)
-            s.sendmail(msg['From'], [msg['To']], msg.as_string())
-            s.quit()
+            msg = self._compose_mail(title, content)
+            self._send_mail(msg)
         else:
-            # TODO log debug
-            print "No journeys found, thus no e-mail was sent."
+            self.logger.warn("No journeys found, thus no e-mail was sent.")
+
+    def _compose_mail(self, title, content):
+        msg_prefix = ""
+        msg_suffix = ""
+
+        msg_text = "\n\n".join([msg_prefix, content.encode('utf-8'), msg_suffix])
+
+        msg = MIMEText(_text=msg_text, _charset='utf-8')
+
+        msg['Subject'] = title
+        msg['From'] = self.from_email
+        msg['To'] = self.to_email
+
+        return msg
+
+    def _send_mail(self, msg):
+        s = smtplib.SMTP(self.smtp_server)
+        if self.smtp_user and self.smtp_pass:
+            s.login(self.smtp_user, self.smtp_pass)
+        s.sendmail(msg['From'], [msg['To']], msg.as_string())
+        s.quit()
 
 
 class PushoverPublisher(BasePublisher):
 
-    def publish(self, content):
+    def publish(self, title, content):
         raise NotImplementedError
 
     # TODO

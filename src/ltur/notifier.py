@@ -6,19 +6,22 @@ from ltur.scrapers import LturScraper
 
 def main():
     # TODO config as cli parameter
-    config = ConfigParser('conf/config.py')
+    # config = ConfigParser('conf/config.py')
+    config = ConfigParser('conf/secret_config.py')
 
     scraper = LturScraper(origin=config.from_city(), destination=config.to_city(),
                           travel_datetime=config.departure_datetime())
 
     journeys = scraper.scrape_journeys()
-    cheap_journeys = _filter_cheap_journeys(journeys)
+    cheap_journeys = _filter_cheap_journeys(journeys, config)
     content = config.output_formatter().format(cheap_journeys)
-    config.target_publisher().publish(content)
+
+    config.target_publisher().publish(scraper.title(), content)
 
 
-def _filter_cheap_journeys(all_found_journeys):
-    return filter(lambda it: it.special_price <= max_price, all_found_journeys)
+def _filter_cheap_journeys(all_found_journeys, config):
+    return filter(lambda it: it.special_price <= config.max_price(), all_found_journeys)
+
 
 
 if __name__ == '__main__':

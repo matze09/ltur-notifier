@@ -35,6 +35,10 @@ class BaseScraper(object):
     def travel_datetime(self):
         """ Desired date and time of travel. """
 
+    @abstractproperty
+    def title(self):
+        """ Descriptive title which will be displayed through publishers. """
+
 
 class LturScraper(BaseScraper):
 
@@ -74,6 +78,11 @@ class LturScraper(BaseScraper):
     def travel_datetime(self):
         return self._travel_datetime
 
+    def title(self):
+        title = '[ltur] - Special offers for %s -> %s on %s' % (self.origin(), self.destination(),
+                                                                self.travel_datetime().strftime(self.FORM_DATE_FORMAT))
+        return title
+
     # TODO refactor
     def _submit_form(self):
         br = Browser()  # create browser instance
@@ -89,8 +98,8 @@ class LturScraper(BaseScraper):
         br.select_form(name='form_spar_topz')
 
         # fill in custom values
-        br['from'] = self.origin()
-        br['to_spar'] = self.destination()
+        br['from'] = self.origin().encode('utf-8')
+        br['to_spar'] = self.destination().encode('utf-8')
         br.form.find_control('fromDate').readonly = False
         br['fromDate'] = self.travel_datetime().strftime(self.FORM_DATE_FORMAT)
         br['fromTime'] = self.travel_datetime().strftime(self.FORM_TIME_FORMAT)
