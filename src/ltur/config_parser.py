@@ -3,7 +3,7 @@ __author__ = 'mloeks'
 import imp
 from datetime import datetime, timedelta
 
-from ltur.exceptions import *
+from exceptions import *
 
 
 class ConfigParser:

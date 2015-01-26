@@ -2,13 +2,14 @@
 __author__ = 'mloeks'
 
 import unittest
+import os
 from datetime import datetime, timedelta
 
-from ltur.scrapers import LturScraper
+from ltur.scrapers import LturScraper, LturJourneyRequestor, LturResultPageParser
 from ltur.formatters import TextFormatter
 
 
-class TestScrapers(unittest.TestCase):
+class TestLturScraper(unittest.TestCase):
 
     def test_ltur_scraper_realdata(self):
         test_travel_datetime = datetime.now() + timedelta(days=5)
@@ -18,17 +19,30 @@ class TestScrapers(unittest.TestCase):
         test_formatter = TextFormatter()
         print test_formatter.format(journeys)
 
-    def test_ltur_scraper_testdata(self):
-        raise NotImplementedError
-
     def test_ltur_scraper_title(self):
         test_travel_datetime = datetime.now() + timedelta(days=5)
         ltur_scraper = LturScraper(origin='Stuttgart Hbf', destination='Kiel Hbf', travel_datetime=test_travel_datetime)
 
         expected_output = u"[ltur] - Special offers for Stuttgart Hbf -> Kiel Hbf on {dep}"\
-            .format(dep=test_travel_datetime.strftime(LturScraper.FORM_DATE_FORMAT))
+            .format(dep=test_travel_datetime.strftime('%d/%m/%y'))
 
         self.assertEquals(expected_output, ltur_scraper.title())
+
+class TestLturResultPageParser(unittest.TestCase):
+
+    def setUp(self):
+        self._set_base_dir()
+
+    def _set_base_dir(self):
+        self.BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+    def test_ltur_result_page_parser_testdata(self):
+        test_result_page = self.BASE_DIR + '/data/test/test_resultpage.html'
+        result_parser = LturResultPageParser(open(test_result_page).read())
+        actual_journeys = result_parser.parse_journeys()
+
+        print '\n'.join([str(jrn) for jrn in actual_journeys])
+
 
 
 if __name__ == '__main__':

@@ -1,28 +1,32 @@
 # -*- coding: utf-8 -*-
 
-from conf.config_parser import ConfigParser
-from ltur.scrapers import LturScraper
+import sys
+
+from config_parser import ConfigParser
+from scrapers import LturScraper
 
 
-def main():
-    # TODO config as cli parameter
-    # config = ConfigParser('conf/config.py')
-    config = ConfigParser('conf/secret_config.py')
+class LturNotifier:
 
-    scraper = LturScraper(origin=config.from_city(), destination=config.to_city(),
-                          travel_datetime=config.departure_datetime())
+    def __init__(self, config_file):
+        self.config_file = config_file
 
-    journeys = scraper.scrape_journeys()
-    cheap_journeys = _filter_cheap_journeys(journeys, config)
-    content = config.output_formatter().format(cheap_journeys)
+    def run(self):
+        config = ConfigParser(self.config_file)
 
-    config.target_publisher().publish(scraper.title(), content)
+        scraper = LturScraper(origin=config.from_city(), destination=config.to_city(),
+                              travel_datetime=config.departure_datetime())
 
+        journeys = scraper.scrape_journeys()
+        cheap_journeys = self._filter_cheap_journeys(journeys, config)
+        content = config.output_formatter().format(cheap_journeys)
 
-def _filter_cheap_journeys(all_found_journeys, config):
-    return filter(lambda it: it.special_price <= config.max_price(), all_found_journeys)
+        config.target_publisher().publish(scraper.title(), content)
 
+    def _filter_cheap_journeys(self, all_found_journeys, config):
+        return filter(lambda it: it.special_price <= config.max_price(), all_found_journeys)
 
 
 if __name__ == '__main__':
-    main()
+    notifier = LturNotifier(sys.argv[1])
+    notifier.run()

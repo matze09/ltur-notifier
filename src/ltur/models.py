@@ -8,9 +8,7 @@ class LturJourney:
 
     DATETIME_FORMAT = '%x %X'
 
-    def __init__(self, origin, destination, departure, arrival, changes, special_price, regular_price):
-        self.origin = origin
-        self.destination = destination
+    def __init__(self, departure, arrival, changes, special_price, regular_price):
         self.departure = departure
         self.arrival = arrival
         self.changes = changes
@@ -26,8 +24,6 @@ class LturJourney:
 
     def to_dict(self):
         return {
-            'origin': unicode(self.origin),
-            'destination': unicode(self.destination),
             'departure': self.departure,
             'arrival': self.arrival,
             'duration': self._calculate_duration(),
@@ -38,10 +34,9 @@ class LturJourney:
 
     def __str__(self):
         duration_string = DateTimeFormattingUtils.duration_to_string(self._calculate_duration())
-        return unicode("{orig} to {dest} on {dep} -> {arr} - {dur} hrs - {changes} changes | "
+        return unicode("{dep} -> {arr} - {dur} hrs - {changes} changes | "
                        "{special} EUR (instead of {normal} EUR)")\
-            .format(orig=self.origin, dest=self.destination,
-                    dep=self.departure.strftime(self.DATETIME_FORMAT), arr=self.arrival.strftime(self.DATETIME_FORMAT),
+            .format(dep=self.departure.strftime(self.DATETIME_FORMAT), arr=self.arrival.strftime(self.DATETIME_FORMAT),
                     dur=duration_string, changes=self.changes,
                     special=self.special_price, normal=self.regular_price)
 

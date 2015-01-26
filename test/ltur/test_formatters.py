@@ -24,13 +24,10 @@ class TestFormatters(unittest.TestCase):
         test_departure = datetime.datetime(2014, 1, 10, 20, 15)
         test_arrival = datetime.datetime(2014, 1, 11, 0, 25)
 
-        self.test_journey_1 = LturJourney(origin=u"Heidelberg Hbf", destination=u"Köln Hbf",
-                                          departure=test_departure, arrival=test_arrival, changes=2,
+        self.test_journey_1 = LturJourney(departure=test_departure, arrival=test_arrival, changes=2,
                                           special_price=17.99, regular_price=129.99)
 
         self.test_journey_2 = copy.copy(self.test_journey_1)
-        self.test_journey_2.origin = "Castrop-Rauxel Hbf"
-        self.test_journey_2.destination = "Darmstadt Hbf"
         self.test_journey_2.special_price = 27
 
         self.test_journeys = [self.test_journey_1, self.test_journey_2]
@@ -38,8 +35,8 @@ class TestFormatters(unittest.TestCase):
     def test_text_formatter(self):
         formatter = TextFormatter()
 
-        expected_output = u"""Heidelberg Hbf to Köln Hbf on {dep} -> {arr} - 04:10 hrs - 2 changes | 17.99 EUR (instead of 129.99 EUR)
-Castrop-Rauxel Hbf to Darmstadt Hbf on {dep} -> {arr} - 04:10 hrs - 2 changes | 27 EUR (instead of 129.99 EUR)"""\
+        expected_output = u"""{dep} -> {arr} - 04:10 hrs - 2 changes | 17.99 EUR (instead of 129.99 EUR)
+{dep} -> {arr} - 04:10 hrs - 2 changes | 27 EUR (instead of 129.99 EUR)"""\
             .format(dep=self.test_journey_1.departure.strftime(LturJourney.DATETIME_FORMAT),
                     arr=self.test_journey_1.arrival.strftime(LturJourney.DATETIME_FORMAT))
         actual_output = formatter.format(self.test_journeys)

@@ -30,7 +30,6 @@ class JsonFormatter(BaseFormatter):
         output_list = []
         for journey in journeys:
             journey_dict = journey.to_dict()
-            print journey_dict
             journey_dict = self._format_datetimes_for_json(journey_dict)
             output_list.append(journey_dict)
 
