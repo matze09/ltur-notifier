@@ -18,13 +18,12 @@ class LturNotifier:
                               travel_datetime=config.departure_datetime())
 
         journeys = scraper.scrape_journeys()
-        cheap_journeys = self._filter_cheap_journeys(journeys, config)
-        content = config.output_formatter().format(cheap_journeys)
+        cheap_journeys = self._filter_cheap_journeys(journeys, config.max_price())
 
-        config.target_publisher().publish(scraper.title(), content)
+        config.target_publisher().publish(scraper, cheap_journeys)
 
-    def _filter_cheap_journeys(self, all_found_journeys, config):
-        return filter(lambda it: it.special_price <= config.max_price(), all_found_journeys)
+    def _filter_cheap_journeys(self, all_found_journeys, max_price):
+        return filter(lambda it: it.special_price <= max_price, all_found_journeys)
 
 
 if __name__ == '__main__':

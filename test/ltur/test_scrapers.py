@@ -6,7 +6,7 @@ import os
 from datetime import datetime, timedelta
 
 from ltur.scrapers import LturScraper, LturJourneyRequestor, LturResultPageParser
-from ltur.formatters import TextFormatter
+from ltur.formatters import TextFormatter, JsonFormatter
 
 
 class TestLturScraper(unittest.TestCase):
@@ -24,7 +24,7 @@ class TestLturScraper(unittest.TestCase):
         ltur_scraper = LturScraper(origin='Stuttgart Hbf', destination='Kiel Hbf', travel_datetime=test_travel_datetime)
 
         expected_output = u"[ltur] - Special offers for Stuttgart Hbf -> Kiel Hbf on {dep}"\
-            .format(dep=test_travel_datetime.strftime('%d/%m/%y'))
+            .format(dep=test_travel_datetime.strftime('%a %d/%m/%y'))
 
         self.assertEquals(expected_output, ltur_scraper.title())
 
@@ -41,8 +41,10 @@ class TestLturResultPageParser(unittest.TestCase):
         result_parser = LturResultPageParser(open(test_result_page).read())
         actual_journeys = result_parser.parse_journeys()
 
-        print '\n'.join([str(jrn) for jrn in actual_journeys])
+        expected_journeys_json = open(self.BASE_DIR + '/data/test/expected_testdata_journeys.json').read()
+        actual_journeys_json = JsonFormatter().format(actual_journeys)
 
+        self.assertEquals(expected_journeys_json, actual_journeys_json)
 
 
 if __name__ == '__main__':

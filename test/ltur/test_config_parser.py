@@ -5,7 +5,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
-from ltur.conf.config_parser import ConfigParser, ConfigDatetimeParser
+from ltur.config_parser import ConfigParser, ConfigDatetimeParser
 from ltur.formatters import JsonFormatter
 from ltur.publishers import ConsolePublisher
 from ltur.exceptions import *
@@ -17,13 +17,13 @@ class TestConfigParser(unittest.TestCase):
         self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
     def test_parse_config(self):
-        test_config_file = self.BASE_DIR + '/../../../data/test/test_config.py'
+        test_config_file = self.BASE_DIR + '/../../data/test/test_config.py'
         config = ConfigParser(test_config_file)
 
         self.assertEquals('Berlin Hbf', config.from_city())
-        self.assertEquals('Hamburg Hbf', config.to_city())
+        # self.assertEquals('Hamburg Hbf', config.to_city())
+        self.assertEquals('Köln Hbf', config.to_city())
         self.assertEquals(40, config.max_price())
-        self.assertTrue(isinstance(config.output_formatter(), JsonFormatter))
         self.assertTrue(isinstance(config.target_publisher(), ConsolePublisher))
 
         days_future = config.raw_config().at_date
@@ -37,10 +37,11 @@ class TestConfigParser(unittest.TestCase):
 class TestConfigDatetimeParser(unittest.TestCase):
 
     def test_get_datetime_string(self):
-        datetime_parser = ConfigDatetimeParser('25-01-2015', '15:30')
+        test_date = datetime.now().date() + timedelta(days=3)
+        datetime_parser = ConfigDatetimeParser(test_date.strftime('%d-%m-%Y'), '15:30')
         parsed_datetime = datetime_parser.get_datetime()
 
-        self.assertEquals('2015-01-25 15:30:00', str(parsed_datetime))
+        self.assertEquals('%s 15:30:00' % test_date.strftime('%Y-%m-%d'), str(parsed_datetime))
 
     def test_get_datetime_string_invalid(self):
         datetime_parser = ConfigDatetimeParser('32-13-2000', '15:30')

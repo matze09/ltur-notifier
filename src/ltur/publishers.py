@@ -7,22 +7,28 @@ import smtplib
 import logging
 from email.mime.text import MIMEText
 
+from ltur.formatters import TextFormatter
+
 
 class BasePublisher(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def publish(self, title, content):
-        """ Publish formatted content to implemented targets. """
+    def publish(self, used_scraper, journeys):
+        """ Publish given journeys to implemented targets. """
 
 
 class ConsolePublisher(BasePublisher):
 
-    def publish(self, title, content):
-        print title
+    logger = logging.getLogger(__name__)
+
+    def publish(self, used_scraper, journeys):
+        print used_scraper.title()
         print "-"*66
-        if content:
-            print content
+
+        formatter = TextFormatter()
+        if journeys:
+            print formatter.format(journeys)
         else:
             print "No journeys found."
 
@@ -31,31 +37,34 @@ class EmailPublisher(BasePublisher):
 
     logger = logging.getLogger(__name__)
 
-    def __init__(self, to_email, from_email, smtp_server, smtp_user, smtp_pass):
-        self.to_email = to_email
+    def __init__(self, to_emails, from_email, smtp_server, smtp_user, smtp_pass):
+        self.to_emails = to_emails
         self.from_email = from_email
         self.smtp_server = smtp_server
         self.smtp_user = smtp_user
         self.smtp_pass = smtp_pass
 
-    def publish(self, title, content):
-        if content:
-            msg = self._compose_mail(title, content)
+    def publish(self, used_scraper, journeys):
+        if journeys:
+            msg = self._compose_mail(used_scraper, journeys)
             self._send_mail(msg)
+            self.logger.info("Notification E-Mail was sent successfully.")
         else:
             self.logger.warn("No journeys found, thus no e-mail was sent.")
 
-    def _compose_mail(self, title, content):
-        msg_prefix = ""
-        msg_suffix = ""
+    def _compose_mail(self, used_scraper, journeys):
+        msg_prefix = "Current special offers for %s" % used_scraper.title()
+        msg_suffix = "Book now: %s" % used_scraper.USER_URL
 
-        msg_text = "\n\n".join([msg_prefix, content.encode('utf-8'), msg_suffix])
+        formatter = TextFormatter()
+        formatted_journeys = formatter.format(journeys)
+        msg_text = "\n\n".join([msg_prefix, formatted_journeys, msg_suffix])
 
         msg = MIMEText(_text=msg_text, _charset='utf-8')
 
-        msg['Subject'] = title
+        msg['Subject'] = used_scraper.title()
         msg['From'] = self.from_email
-        msg['To'] = self.to_email
+        msg['To'] = ','.join(self.to_emails)
 
         return msg
 
@@ -63,7 +72,7 @@ class EmailPublisher(BasePublisher):
         s = smtplib.SMTP(self.smtp_server)
         if self.smtp_user and self.smtp_pass:
             s.login(self.smtp_user, self.smtp_pass)
-        s.sendmail(msg['From'], [msg['To']], msg.as_string())
+        s.sendmail(msg['From'], self.to_emails, msg.as_string())
         s.quit()
 
 

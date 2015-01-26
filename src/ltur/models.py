@@ -6,7 +6,7 @@ import math
 
 class LturJourney:
 
-    DATETIME_FORMAT = '%x %X'
+    DATETIME_FORMAT = '%d/%m %H:%M'
 
     def __init__(self, departure, arrival, changes, special_price, regular_price):
         self.departure = departure
@@ -17,10 +17,6 @@ class LturJourney:
 
     def _calculate_duration(self):
         return self.arrival - self.departure
-
-    def _parse_from_html_tag(self):
-        # TODO
-        raise NotImplementedError
 
     def to_dict(self):
         return {
@@ -38,7 +34,7 @@ class LturJourney:
                        "{special} EUR (instead of {normal} EUR)")\
             .format(dep=self.departure.strftime(self.DATETIME_FORMAT), arr=self.arrival.strftime(self.DATETIME_FORMAT),
                     dur=duration_string, changes=self.changes,
-                    special=self.special_price, normal=self.regular_price)
+                    special="%.2f" % self.special_price, normal="%.2f" % self.regular_price)
 
 
 class DateTimeFormattingUtils:
