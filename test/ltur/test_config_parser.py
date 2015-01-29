@@ -20,16 +20,15 @@ class TestConfigParser(unittest.TestCase):
         test_config_file = self.BASE_DIR + '/../../data/test/test_config.py'
         config = ConfigParser(test_config_file)
 
-        self.assertEquals('Berlin Hbf', config.from_city())
-        # self.assertEquals('Hamburg Hbf', config.to_city())
-        self.assertEquals('Köln Hbf', config.to_city())
+        self.assertEquals(u'Stuttgart Hbf', config.from_city())
+        self.assertEquals(u'Köln Hbf', config.to_city())
         self.assertEquals(40, config.max_price())
         self.assertTrue(isinstance(config.target_publisher(), ConsolePublisher))
 
         days_future = config.raw_config().at_date
         future_date = datetime.now().date() + timedelta(days=days_future)
 
-        self.assertEquals(3, days_future)
+        self.assertEquals(5, days_future)
         self.assertEquals('09:12', config.raw_config().at_time)
         self.assertEquals('%s 09:12:00' % str(future_date), str(config.departure_datetime()))
 

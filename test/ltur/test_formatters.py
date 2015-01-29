@@ -8,7 +8,7 @@ from datetime import timedelta
 import copy
 
 from ltur.models import LturJourney
-from ltur.formatters import TextFormatter, JsonFormatter
+from ltur.formatters import TextFormatter, JsonFormatter, HtmlFormatter
 
 
 class TestFormatters(unittest.TestCase):
@@ -50,6 +50,15 @@ class TestFormatters(unittest.TestCase):
         actual_output = formatter.format(self.test_journeys)
 
         self.assertEquals(expected_output.strip(), actual_output.strip())
+
+    def test_html_formatter(self):
+        formatter = HtmlFormatter()
+
+        expected_output = open(self.BASE_DIR + '/data/test/expected.html').read()
+        actual_output = formatter.format(self.test_journeys)
+        print actual_output
+
+        # self.assertEquals(expected_output, actual_output)
 
 
 
