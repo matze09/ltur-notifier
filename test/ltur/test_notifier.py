@@ -16,7 +16,8 @@ class TestLturNotifier(unittest.TestCase):
         logging.basicConfig(level=logging.DEBUG)
 
     def test_ltur_notifier(self):
-        test_config_file = self.BASE_DIR + '/../../data/test/test_config.py'
+        # test_config_file = self.BASE_DIR + '/../../data/test/test_config.py'
+        test_config_file = self.BASE_DIR + '/../../conf/secret_config.py'
         notifier = LturNotifier(test_config_file)
         notifier.run()
 

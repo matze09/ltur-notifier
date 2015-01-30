@@ -25,7 +25,7 @@ class TestFormatters(unittest.TestCase):
         test_arrival = datetime.datetime(2014, 1, 11, 0, 25)
 
         self.test_journey_1 = LturJourney(departure=test_departure, arrival=test_arrival, changes=2,
-                                          special_price=17, regular_price=129.99)
+                                          special_price=17, regular_price=129.99, direct_link='http://www.example.com')
 
         self.test_journey_2 = copy.copy(self.test_journey_1)
         self.test_journey_2.special_price = 27
@@ -35,8 +35,8 @@ class TestFormatters(unittest.TestCase):
     def test_text_formatter(self):
         formatter = TextFormatter()
 
-        expected_output = u"""{dep} -> {arr} - 04:10 hrs - 2 changes | 17.00 EUR (instead of 129.99 EUR)
-{dep} -> {arr} - 04:10 hrs - 2 changes | 27.00 EUR (instead of 129.99 EUR)"""\
+        expected_output = u"""{dep} -> {arr} - 04:10 hrs - 2 changes | 17.00 EUR (instead of 129.99 EUR) - http://www.example.com
+{dep} -> {arr} - 04:10 hrs - 2 changes | 27.00 EUR (instead of 129.99 EUR) - http://www.example.com"""\
             .format(dep=self.test_journey_1.departure.strftime(LturJourney.DATETIME_FORMAT),
                     arr=self.test_journey_1.arrival.strftime(LturJourney.DATETIME_FORMAT))
         actual_output = formatter.format(self.test_journeys)

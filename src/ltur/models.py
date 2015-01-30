@@ -8,12 +8,13 @@ class LturJourney:
 
     DATETIME_FORMAT = '%d/%m %H:%M'
 
-    def __init__(self, departure, arrival, changes, special_price, regular_price):
+    def __init__(self, departure, arrival, changes, special_price, regular_price, direct_link):
         self.departure = departure
         self.arrival = arrival
         self.changes = changes
         self.special_price = special_price
         self.regular_price = regular_price
+        self.direct_link = direct_link
 
     def _calculate_duration(self):
         return self.arrival - self.departure
@@ -25,16 +26,17 @@ class LturJourney:
             'duration': self._calculate_duration(),
             'changes': self.changes,
             'special_price': self.special_price,
-            'regular_price': self.regular_price
+            'regular_price': self.regular_price,
+            'direct_link': self.direct_link
         }
 
     def __str__(self):
         duration_string = DateTimeFormattingUtils.duration_to_string(self._calculate_duration())
         return unicode("{dep} -> {arr} - {dur} hrs - {changes} changes | "
-                       "{special} EUR (instead of {normal} EUR)")\
+                       "{special} EUR (instead of {normal} EUR) - {link}")\
             .format(dep=self.departure.strftime(self.DATETIME_FORMAT), arr=self.arrival.strftime(self.DATETIME_FORMAT),
                     dur=duration_string, changes=self.changes,
-                    special="%.2f" % self.special_price, normal="%.2f" % self.regular_price)
+                    special="%.2f" % self.special_price, normal="%.2f" % self.regular_price, link=self.direct_link)
 
 
 class DateTimeFormattingUtils:
