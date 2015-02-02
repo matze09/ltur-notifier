@@ -154,12 +154,10 @@ class LturResultPageParser:
             changes = self._get_changes_from_tr(journey_tr)
             special_price = self._get_special_price_from_tr(journey_tr)
             regular_price = self._get_regular_price_from_tr(journey_tr)
-            direct_link = self._get_direct_link_from_tr(journey_tr)
 
             if special_price:
                 new_journey = LturJourney(departure=departure, arrival=arrival, changes=changes,
-                                          special_price=special_price, regular_price=regular_price,
-                                          direct_link=direct_link)
+                                          special_price=special_price, regular_price=regular_price)
                 journeys.append(new_journey)
 
         sorted_journeys = sorted(journeys, key=attrgetter('departure', 'special_price', 'arrival', 'changes'))
@@ -259,7 +257,3 @@ class LturResultPageParser:
                 return float(price)
 
         return None
-
-    def _get_direct_link_from_tr(self, tr):
-        # TODO implement parsing of direct booking link
-        return 'http://www.ltur.com'

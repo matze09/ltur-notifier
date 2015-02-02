@@ -1,24 +1,24 @@
 <style type="text/css">
     table {
-        border: 1px solid black;
         border-collapse: collapse;
     }
     td {
-        padding: 10px 5px;
+        padding: 15px 10px;
         text-align: center;
     }
     tr {
         border-bottom: 1px solid black;
+        border-top: 1px solid black;
     }
     td.special_price {
         font-weight: bold;
         font-size: 120%;
     }
     td.regular_price {
-        font-size: 90%;
+        font-size: 85%;
     }
     td.times {
-        font-size: 65%;
+        font-size: 75%;
         font-style: italic;
     }
 
@@ -38,13 +38,11 @@
             {{ journey.changes }}x
         </td>
         <td class="special_price">
-            {{ journey.special_price }} &euro;
+            {{ '{0:0.2f}'.format(journey.special_price) }} &euro;
         </td>
         <td class="regular_price">
-            ({{ journey.regular_price }} &euro;)
-        </td>
-        <td class="direct_link">
-            <a href="{{ journey.direct_link }}">Book now!</a>
+            instead of <br/>
+            ({{ '{0:0.2f}'.format(journey.regular_price) }} &euro;)
         </td>
     </tr>
     {% endfor %}
