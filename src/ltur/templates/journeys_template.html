@@ -1,8 +1,15 @@
 <style type="text/css">
+    * {
+        color: #333333;
+    }
     table {
         border-collapse: collapse;
     }
-    td {
+    th {
+        font-weight: bold;
+        font-size: 110%;
+    }
+    td, th {
         padding: 15px 10px;
         text-align: center;
     }
@@ -10,23 +17,34 @@
         border-bottom: 1px solid black;
         border-top: 1px solid black;
     }
+    tr.title {
+        background-color: #EDCCED;
+    }
+    tr.even {
+        background-color: #FFF5FF;
+    }
     td.special_price {
         font-weight: bold;
         font-size: 120%;
     }
+    td.times,
     td.regular_price {
-        font-size: 85%;
-    }
-    td.times {
-        font-size: 75%;
+        font-size: 80%;
         font-style: italic;
     }
 
 </style>
 
 <table>
+    <tr class="title">
+        <th>Dep. / Arr.</th>
+        <th>Duration</th>
+        <th>Changes</th>
+        <th>LTUR Price</th>
+        <th>Regular Price</th>
+    </tr>
     {% for journey in journeys %}
-    <tr>
+    <tr class="{{ loop.cycle('odd', 'even') }}">
         <td class="times">
             dep {{ journey.departure|datetime }}<br/>
             arr {{ journey.arrival|datetime }}
@@ -41,8 +59,7 @@
             {{ '{0:0.2f}'.format(journey.special_price) }} &euro;
         </td>
         <td class="regular_price">
-            instead of <br/>
-            ({{ '{0:0.2f}'.format(journey.regular_price) }} &euro;)
+            {{ '{0:0.2f}'.format(journey.regular_price) }} &euro;
         </td>
     </tr>
     {% endfor %}

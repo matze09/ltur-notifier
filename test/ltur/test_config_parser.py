@@ -22,7 +22,7 @@ class TestConfigParser(unittest.TestCase):
 
         self.assertEquals(u'Stuttgart Hbf', config.from_city())
         self.assertEquals(u'Köln Hbf', config.to_city())
-        self.assertEquals(40, config.max_price())
+        self.assertEquals(80, config.max_price())
         self.assertTrue(isinstance(config.target_publisher(), ConsolePublisher))
 
         days_future = config.raw_config().at_date

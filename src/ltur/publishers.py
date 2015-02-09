@@ -74,8 +74,8 @@ class EmailPublisher(BasePublisher):
         msg.attach(plain_part)
 
     def _attach_html_part(self, msg, used_scraper, journeys):
-        html_msg = self._compose_html_msg(journeys)
-        html_part = MIMEText(html_msg, 'html')
+        html_msg = self._compose_html_msg(used_scraper, journeys)
+        html_part = MIMEText(html_msg, 'html', 'utf-8')
         msg.attach(html_part)
 
     def _compose_plain_msg(self, used_scraper, journeys):
@@ -88,10 +88,15 @@ class EmailPublisher(BasePublisher):
 
         return msg_text
 
-    def _compose_html_msg(self, journeys):
+    def _compose_html_msg(self, used_scraper, journeys):
+        msg_suffix = '<p class="footer" style="margin-top:35px;font-size:120%%;">Book now: <a href="%s">%s</a></p>' % \
+                     (used_scraper.USER_URL, used_scraper.USER_URL)
+
         formatter = HtmlFormatter()
         formatted_journeys = formatter.format(journeys)
-        return formatted_journeys
+
+        msg_text = "\n\n".join([formatted_journeys, msg_suffix])
+        return msg_text
 
     def _send_mail(self, msg):
         s = smtplib.SMTP(self.smtp_server)

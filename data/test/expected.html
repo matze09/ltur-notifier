@@ -1,32 +1,50 @@
 <style type="text/css">
+    * {
+        color: #333333;
+    }
     table {
-        border: 1px solid black;
         border-collapse: collapse;
     }
-    td {
-        padding: 10px 5px;
+    th {
+        font-weight: bold;
+        font-size: 110%;
+    }
+    td, th {
+        padding: 15px 10px;
         text-align: center;
     }
     tr {
         border-bottom: 1px solid black;
+        border-top: 1px solid black;
+    }
+    tr.title {
+        background-color: #EDCCED;
+    }
+    tr.even {
+        background-color: #FFF5FF;
     }
     td.special_price {
         font-weight: bold;
         font-size: 120%;
     }
+    td.times,
     td.regular_price {
-        font-size: 90%;
-    }
-    td.times {
-        font-size: 65%;
+        font-size: 80%;
         font-style: italic;
     }
 
 </style>
 
 <table>
+    <tr class="title">
+        <th>Dep. / Arr.</th>
+        <th>Duration</th>
+        <th>Changes</th>
+        <th>LTUR Price</th>
+        <th>Regular Price</th>
+    </tr>
 
-    <tr>
+    <tr class="odd">
         <td class="times">
             dep 10 Jan, 20:15<br/>
             arr 11 Jan, 00:25
@@ -38,18 +56,14 @@
             2x
         </td>
         <td class="special_price">
-            17 &euro;
+            17.00 &euro;
         </td>
         <td class="regular_price">
-            (129.99 &euro;)
-        </td>
-        <td class="direct_link">
-
-            <a href="#">Book now!</a>
+            129.99 &euro;
         </td>
     </tr>
 
-    <tr>
+    <tr class="even">
         <td class="times">
             dep 10 Jan, 20:15<br/>
             arr 11 Jan, 00:25
@@ -61,14 +75,10 @@
             2x
         </td>
         <td class="special_price">
-            27 &euro;
+            27.00 &euro;
         </td>
         <td class="regular_price">
-            (129.99 &euro;)
-        </td>
-        <td class="direct_link">
-
-            <a href="#">Book now!</a>
+            129.99 &euro;
         </td>
     </tr>
 

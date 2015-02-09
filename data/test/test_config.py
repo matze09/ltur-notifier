@@ -13,7 +13,7 @@ at_date = 5               # default to tomorrow (+1 day)
 # at_date = '25-01-2015'
 
 at_time = '09:12'
-max_price = 40.0
+max_price = 80.0
 
 # set the destination to publish results: console, email, pushover ...
 PUBLISH_TARGET = ConsolePublisher()

@@ -56,10 +56,9 @@ class TestFormatters(unittest.TestCase):
 
         expected_output = open(self.BASE_DIR + '/data/test/expected.html').read()
         actual_output = formatter.format(self.test_journeys)
-        print actual_output
+        # print actual_output
 
-        # self.assertEquals(expected_output, actual_output)
-
+        self.assertEquals(expected_output.replace(" ", ""), actual_output.replace(" ", ""))
 
 
 if __name__ == '__main__':
